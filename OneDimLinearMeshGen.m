@@ -23,7 +23,9 @@ function [mesh] = OneDimLinearMeshGen(xmin,xmax,Ne)
 
         %set element Jacobian based on mapping to standard element
         mesh.elem(i).J = 0.5*dx; %this is assuming standard element of -1 to 1
-       
+        mesh.elem(i).D = 1;
+        mesh.elem(i).L = 0;
+        mesh.elem(i).F = 0;
 
     end
 

@@ -1,24 +1,14 @@
-function [sol] = Run()
+function [sol] = Run(dx,dt,tmax,theta)
 
-Nx = 10;
-Nt = 10;
+Nt = tmax/dt;
+Nx = 1/dx;
 
-xmax = 1;
-tmax = 10;
+tVal= 0:dt:tmax;
 
-D = 1; L = 1; F = 1;
-
-theta = 0;
-
-tVal= 0:tmax/Nt:tmax;
-
-mesh = OneDimLinearMeshGen(0,xmax,Nx);
+mesh = OneDimLinearMeshGen(0,1,Nx);
 
 for t = 1:Nt+1
     mesh.t = tVal(t);
-    mesh.D = D;
-    mesh.L = L;
-    mesh.F = F;
     meshMatrix(t) = mesh;
 end
 
@@ -29,9 +19,7 @@ sol(1,:)=0; % all time at 0 space equals 0 (first row)
 sol(Nx+1,:)=1; % all time at end space equals 1 (last row)
 
 for i = 2:Nt+1
-    M=1;
-    J=1;
-    sol(:,i) = MeshSolve(meshMatrix(i),tVal(i));
+    sol(:,i) = MeshSolve(meshMatrix(i),sol(:,i-1),dt,theta);
 end
 
 end

@@ -1,14 +1,4 @@
 function [cout] = FESolver(mesh,D,L,f,bc0,bc1,type0,type1)
-%% FESolver: Solves the Laplace equation using finite element method.
-% %   mesh: Mesh information containing element properties.
-% %   D: Diffusion coefficient.
-% %   L: Reactivity coefficient.
-% %   f: Source term.
-% %   bc0: Boundary condition value at the left end.
-% %   bc1: Boundary condition value at the right end.
-% %   type0: Type of boundary condition at the left end ('n' for Neumann, 'd' for Dirichlet).
-% %   type1: Type of boundary condition at the right end ('n' for Neumann, 'd' for Dirichlet).
-% %   cout: Solution vector.
 
 mat = zeros(mesh.ngn); % Initialize the global stiffness matrix.
 res = zeros(mesh.ngn,1); % Initialize the solution vector.
