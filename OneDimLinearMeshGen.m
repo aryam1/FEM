@@ -9,7 +9,10 @@ function [mesh] = OneDimLinearMeshGen(xmin,xmax,Ne)
     dx = (xmax - xmin)/Ne; %calculate element size
 
     mesh.nvec = xmin:dx:xmax;
-    
+    mesh.sol = zeros(mesh.ngn,1);
+    mesh.NBc = zeros(mesh.ngn,1);
+    mesh.F = zeros(mesh.ngn,1);
+
     %loop over elements & set the element properties
     for i=1:Ne
 
@@ -25,8 +28,6 @@ function [mesh] = OneDimLinearMeshGen(xmin,xmax,Ne)
         mesh.elem(i).J = 0.5*dx; %this is assuming standard element of -1 to 1
         mesh.elem(i).D = 1;
         mesh.elem(i).L = 0;
-        mesh.elem(i).F = 0;
-
     end
 
 end
