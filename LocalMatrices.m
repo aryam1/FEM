@@ -5,11 +5,12 @@ function [K,M] = LocalMatrices(eID, mesh,basis)
     D = mesh.elem(eID).D;
     [p,w]= GQScheme(4);
     [psi,dpsi] = BasisFunc(basis);
-    psi0 = psi{1}(p);psi1 = psi{2}(p);
-    dpsi0 = dpsi{1}(p);dpsi1 = dpsi{2}(p);
-    
+   
     switch basis
         case 1
+            psi0 = psi{1}(p); psi1 = psi{2}(p);
+            dpsi0 = dpsi{1}(p); dpsi1 = dpsi{2}(p);
+
             M = J * [w*(psi0.*psi0)' w*(psi1.*psi0)';
                      w*(psi0.*psi1)' w*(psi1.*psi1)'];
             K1 = (D/J) * [dpsi0*dpsi0 dpsi1*dpsi0;
@@ -21,8 +22,8 @@ function [K,M] = LocalMatrices(eID, mesh,basis)
             K = 2*K1 - (L*M);
         
         case 2
-            psi2 = psi{3}(p);
-            dpsi2 = dpsi{3}(p);
+            psi0 = psi{1}(p); psi1 = psi{2}(p); psi2 = psi{3}(p);
+            dpsi0 = dpsi{1}(p); dpsi1 = dpsi{2}(p); dpsi2 = dpsi{3}(p);
             
             M = J * [w*(psi0.*psi0)' w*(psi1.*psi0)' w*(psi2.*psi0)';
                      w*(psi0.*psi1)' w*(psi1.*psi1)' w*(psi2.*psi1)';
@@ -34,5 +35,4 @@ function [K,M] = LocalMatrices(eID, mesh,basis)
 
             K = K1 - (L*M);
     end
-
 end

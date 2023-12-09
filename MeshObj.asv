@@ -13,7 +13,7 @@ classdef MeshObj
         Dvec (2,:) double % spatially varying diffusion term 
         Lvec (2,:) double % spatially varying reaction term
         Fvec (1,:) double % spatially varying source term
-        elems = ElemObj.empty
+        nodes 
     end
     properties (Dependent)
         dx % Spatial width of linear nodes
@@ -30,13 +30,11 @@ classdef MeshObj
              [obj.lBoundary,obj.lBoundaryType,obj.rBoundary,obj.rBoundaryType] = boundaries{:};
              obj.basisType = basis;
              obj.t = t;
-             obj = obj.elemSetup();
+             obj.elemSetup();
         end
 
         function obj = elemSetup(obj)
-            for i = 1:obj.elemN
-                obj.elems(i) = ElemObj(i,obj.nVec(i),obj.nVec(i+1),obj.basisType);
-            end
+            obj.elems = zeros(1,obj.elemN);
         end
 
         function xStep = get.dx(obj)

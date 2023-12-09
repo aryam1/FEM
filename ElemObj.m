@@ -1,32 +1,25 @@
 classdef ElemObj
     properties
-        J
-        D
-        L
-        Solution
+        D (1,:) double = [1]
+        L (1,:) double = [0]
+        F (1,:) double = [0]
+        sol {mustBeNumeric} = 0
+        x (1,2) double
+        id {mustBeNumeric} = 0
         t {mustBeNumeric} = 0 % Current time for mesh
-        Ne {mustBeNumeric} % Number of elements in mesh
-        minX {mustBeGreaterThanOrEqual(minX,0)} % Starting x position of mesh
-        maxX {mustBeGreaterThan(maxX,0)} % End x position of mesh
     end
     properties (Dependent)
-        dx % Spatial width of linear nodes
-        L2 % L2 Norm error for the mesh
-        NGn % Number of nodes in mesh
-        Nvec % Position of every global node
+        E % error
     end
     methods
-        function xStep = get.dx(obj)
-            xStep = (obj.maxX - obj.minX)/obj.Ne; % Computing linear spatial step
-        end
-        function gNodes = get.Nvec(obj)
-            gNodes = obj.minX:obj.dx:obj.maxX; % Change to Array of element objects
-        end
-        function error = get.L2(obj)
-            error =1; % Change to sum e of each element
-        end
-        function nodes = get.NGn(obj)
-            nodes = obj.Ne+1; % Number of nodes is 1 greater than elements
+        function obj = ElemObj(id,x0,x1,basis)
+            obj.id = id;
+            switch basis
+                case 1
+                    obj.x = [x0 x1];
+                case 2
+                    obj.x = [x0 (x0+x1)/2 x1];
+            end
         end
         
     end
