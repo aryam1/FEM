@@ -19,17 +19,16 @@ classdef ElemObj
             obj.J = (x(end)-x(1))/2;
         end
 
-        function [K,M,F] = LocalMatrix(self,psi,dpsi,gauss)
-            [p,w]= GQScheme(gauss);
+        function [K,M,F] = LocalMatrix(self,psi,dpsi,p,w)
             order = self.basis+1;
             K = zeros(order);
             M = zeros(order);
             F = zeros(order,1);
 
-            for i = 1:gauss
+            for i = 1:length(p)
                 xipt = p(i);
                 gw = w(i);
-                for j = 1:self.basis+1
+                for j = 1:order
                     d(j)=self.D(j)*gw*(psi{j}(xipt));
                     l(j)=self.D(j)*gw*(psi{j}(xipt));
                     f(j)=self.F(j)*gw*(psi{j}(xipt));
