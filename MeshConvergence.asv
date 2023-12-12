@@ -13,8 +13,8 @@ DDist = [1;1];
 LDist = [1;0];
 FDist = [1;0];
 
-Nx = [[10:10:100],[200:100:1000]];
-Nt = [[10:10:100],[200:100:1000]];
+Nx = 2.^[2:14];
+Nt = 2.^[2:14];
 
 for theta = [0 0.5 1]
 for basis = [1,2]
@@ -43,15 +43,15 @@ for basis = [1,2]
             matrix(i) = matrix(i).Solve(theta,matrix(i-1));
             matrix(i) = matrix(i).L2Norm();
         end
-        L2 = sqrt(sum([matrix.L2]));
+        L2 = sum([matrix.L2]);
         matrix = MeshObj.empty();
         E(ix) = dt*trapz(L2);
     end
     E= reshape(E,length(Nx),length(Nt));
-    name = "%dbasis_%d_theta_E.mat";
-    save(sprintf(name,basis,theta),'E','Nx','Nt')
+    disp(size(E))
+    name = '%dbasis_%d_theta_E.mat';
+    name = sprintf(name,basis,theta);
+    save(name,E)
     clear E;
 end
 end
-
-% T is columns X is rows

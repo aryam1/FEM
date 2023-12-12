@@ -1,13 +1,13 @@
 basis = 2;
 
-xElems = 2000;
+xElems = 100;
 xDist = [0.01;1];
 %xDist = [5/3000 5/1000 0.01; 2 8 5];
 x0 = 0;
 
 t0 = 0;
 t1 = 30;
-dt = 0.0001;
+dt = 0.01;
 Nt = 1+t1/dt;
 
 tvals = t0:dt:t1;
@@ -23,9 +23,11 @@ LDist = [LBDist(1,:);-(LBDist(2,:) + LGDist(2,:))];
 FDist = [1;0];
 
 matrix = MeshObj.empty(0,Nt);
-ppm = ParforProgressbar(10);
 
 for i = 1:t1/dt + 1
+    if mod(i,100) == 0
+        disp(i);
+    end
     matrix(i) = MeshObj(x0, xElems, xDist, {LB,'d',RB,'d'}, basis, tvals(i), dt);
     if i == 1
         xvals = matrix(i).nVec;
@@ -35,7 +37,6 @@ for i = 1:t1/dt + 1
         continue
     end
     matrix(i) = matrix(i).Solve(0.5,matrix(i-1));
-    ppm.increment();
 end
 [sol] = [matrix.solution];
 

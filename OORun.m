@@ -1,6 +1,6 @@
 basis = 2;
 
-xElems = 1000;
+xElems = 100;
 xDist = [1;1];
 x0 = 0;
 
