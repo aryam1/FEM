@@ -28,22 +28,21 @@ classdef ElemObj
             for i = 1:length(p)
                 xipt = p(i);
                 gw = w(i);
-                for j = 1:order
-                    d(j)=self.D(j)*gw*(psi{j}(xipt));
-                    l(j)=self.D(j)*gw*(psi{j}(xipt));
-                    f(j)=self.F(j)*gw*(psi{j}(xipt));
-                end
-                totalD = sum(d);
-                totalL = sum(l);
-                totalF = sum(f);
-                for m = 1:order
-                    F(m,1) = totalF*self.J;
-                    for n = 1:order
-                        M1 = self.J*gw*(psi{n}(xipt)*psi{m}(xipt));
-                        M(n,m) = M(n,m) + M1;
-                        K(n,m) = K(n,m) + ((totalD/self.J)*gw*dpsi{n}(xipt)*dpsi{m}(xipt))-totalL*M1;
-                    end
-                end
+
+                psiVals = cellfun(@(fun) fun(xipt), psi);
+                dpsiVals = cellfun(@(fun) fun(xipt), dpsi);
+
+                psiMatrix = psiVals.*psiVals';
+                dpsiMatrix = dpsiVals.*dpsiVals';
+                
+                totalD = psiVals*(self.D)';
+                totalL = psiVals*(self.L)';
+                totalF = psiVals*(self.F)';
+
+                F = F + gw*totalF*self.J;
+                M1 = self.J*gw*psiMatrix;
+                M = M + M1;
+                K = K + (totalD/self.J)*gw*dpsiMatrix - totalL*M1;
             end
         end
 

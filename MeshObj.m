@@ -107,7 +107,7 @@ classdef MeshObj
 
         function self = Solve(self,theta,previous) % Solve system
             % If not transient, copy global matrices, 
-            % elements and materials distributionsfrom previous mesh
+            % elements and materials distributions from previous mesh
             if ~self.transient 
                 self.KGlobal = previous.KGlobal;
                 self.MGlobal = previous.MGlobal;
@@ -144,32 +144,35 @@ classdef MeshObj
                 causeException = MException('MeshObj:L2Norm',"Analytical Solution Not Known For This System");
                 throw(causeException);
             end
-            [p,w]= self.GQScheme(3);
-            self.L2 = 0;
-            intxVals = zeros(self.elemN,3);
-            intSol = zeros(self.elemN,3);
+            [p,w] = self.GQScheme(4);
+            [psi,~] = self.BasisFunc(self.basisType);
+            xVals = zeros(self.elemN,self.basisType+1);
+            solVals = zeros(self.elemN,self.basisType+1);
             Jvec = zeros(self.elemN,1);
             
             for i = 1:self.elemN
                 I = self.basisType * (i-1) + 1;
-                c0 = self.solution(I);
-                c1 = self.solution(I+self.basisType);
-                x0 = self.nVec(I);
-                x1 = self.nVec(I+self.basisType);
-                J = self.elems(i).J;
-                Jvec(i) = J;
-                xInterp = 0.5*x0*(1-p)+0.5*x1*(1+p);
-                intxVals(i,:) = xInterp;
-                intSol(i,:) = 0.5*c0*(1-p) - 0.5*c1*(1+p);
+                I2 = I + self.basisType;
+                solVals(i,:) = self.solution(I:I2);
+                xVals(i,:) = self.nVec(I:I2);
+                Jvec(i) = self.elems(i).J;
             end
-            tran = self.TransientAnalyticalSol(xInterp,self.t);
-            E = Jvec.*w.*(tran - intSol).^2;
-            self.L2 = self.L2 + sum(E,2);
+            E = zeros(self.elemN,4);
+            for g = 1:4
+                xInterp = sum(xVals.*(cellfun(@(fun) fun(p(g)), psi)),2);
+                analytic = self.TransientAnalyticalSol(xInterp,self.t);
+                solInterp = sum(solVals.*(cellfun(@(fun) fun(p(g)), psi)),2);
+                E(:,g) = w(g)*Jvec.*(analytic-solInterp).^2;
+            end
+            self.L2 = sum(E,2);
         end
-
 
         function nodes = get.globalN(obj) % Get number of nodes
             nodes = (obj.elemN*obj.basisType)+1; % Number of nodes is 1 greater than elements times basis order
+        end
+
+        function ind = xInd(self,x)
+            ind = find(self.nVec >= x, 1);
         end
 
     end

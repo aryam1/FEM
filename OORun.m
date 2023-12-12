@@ -1,12 +1,12 @@
-basis = 1;
+basis = 2;
 
-xElems = 100;
+xElems = 1000;
 xDist = [1;1];
 x0 = 0;
 
 t0 = 0;
 t1 = 1;
-dt = 0.005;
+dt = 0.01;
 Nt = 1+t1/dt;
 
 tvals = t0:dt:t1;
