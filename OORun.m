@@ -1,4 +1,4 @@
-function [matrix] = OORun(basis,xElems,xDist,x0,t0,t1,dt,IC,LB,RB,LBType,RBType,DDist,LDist,FDist)
+function [matrix] = OORun(basis,xElems,xDist,x0,t0,t1,dt,IC,LB,RB,LBType,RBType,DDist,LDist,FDist) 
 
 Nt = 1+t1/dt;   % Number of time steps
 

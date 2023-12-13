@@ -52,7 +52,7 @@ classdef MeshObj
         end
 
         function self = SetParams(self,dVec,lVec,fVec) % Set spatially varying parameters
-            if any([~isnumeric(dVec),~isnumeric(lVec),~isnumeric(fVec)])
+            if any([~isnumeric(dVec),~isnumeric(lVec),~isnumeric(fVec)]) % Check if parameters are numeric arrays
                 causeException = MException('MeshObj:SetParams',"Invalid parameters");
                 throw(causeException);
             end
@@ -91,7 +91,7 @@ classdef MeshObj
             FG = zeros(self.globalN,1);
 
             [psi,dpsi] = self.BasisFunc(self.basisType); % Get basis functions
-            [p,w]= self.GQScheme(4);
+            [p,w]= self.GQScheme(4); % Get quadrature scheme
 
             for i = 1:self.elemN % Loop through elements
                 [K,M,F] = self.elems(i).LocalMatrix(psi,dpsi,p,w); % Get local matrices
@@ -110,11 +110,11 @@ classdef MeshObj
         end
 
         function self = Solve(self,theta,previous) % Solve system
-            if ~ismember(theta,[0 0.5 1])
+            if ~ismember(theta,[0 0.5 1]) % Check if theta is valid
                 causeException = MException('MeshObj:Solve',"Invalid theta scheme");
                 throw(causeException);
             end
-            if ~isa(previous,'MeshObj')
+            if ~isa(previous,'MeshObj') % Check if previous mesh is valid
                 causeException = MException('MeshObj:Solve',"Invalid mesh object");
                 throw(causeException);
             end
@@ -152,12 +152,12 @@ classdef MeshObj
         end
 
         function self = L2Norm(self)
-            if any([self.Dvec ~= [1;1], self.Lvec ~= [1;0], self.Fvec ~= [1;0]])
+            if any([self.Dvec ~= [1;1], self.Lvec ~= [1;0], self.Fvec ~= [1;0]]) % Check if analytical solution is known
                 causeException = MException('MeshObj:L2Norm',"Analytical Solution Not Known For This System");
                 throw(causeException);
             end
-            [p,w] = self.GQScheme(4);
-            [psi,~] = self.BasisFunc(self.basisType);
+            [p,w] = self.GQScheme(4); % Get quadrature scheme
+            [psi,~] = self.BasisFunc(self.basisType); % Get basis functions
             xVals = zeros(self.elemN,self.basisType+1);
             solVals = zeros(self.elemN,self.basisType+1);
             Jvec = zeros(self.elemN,1);
@@ -165,18 +165,18 @@ classdef MeshObj
             for i = 1:self.elemN
                 I = self.basisType * (i-1) + 1;
                 I2 = I + self.basisType;
-                solVals(i,:) = self.solution(I:I2);
-                xVals(i,:) = self.nVec(I:I2);
-                Jvec(i) = self.elems(i).J;
+                solVals(i,:) = self.solution(I:I2); % Get solution values
+                xVals(i,:) = self.nVec(I:I2); % Get x values
+                Jvec(i) = self.elems(i).J; % Get Jacobian
             end
             E = zeros(self.elemN,4);
-            for g = 1:4
-                xInterp = sum(xVals.*(cellfun(@(fun) fun(p(g)), psi)),2);
-                analytic = self.TransientAnalyticalSol(xInterp,self.t);
-                solInterp = sum(solVals.*(cellfun(@(fun) fun(p(g)), psi)),2);
-                E(:,g) = w(g)*Jvec.*(analytic-solInterp).^2;
+            for g = 1:4 % Loop through quadrature points
+                xInterp = sum(xVals.*(cellfun(@(fun) fun(p(g)), psi)),2); % Interpolate x values
+                analytic = self.TransientAnalyticalSol(xInterp,self.t); % Get analytical solution
+                solInterp = sum(solVals.*(cellfun(@(fun) fun(p(g)), psi)),2); % Interpolate solution
+                E(:,g) = w(g)*Jvec.*(analytic-solInterp).^2; % Calculate L2 norm error
             end
-            self.L2 = sum(E,2);
+            self.L2 = sum(E,2); % Sum L2 norm error
         end
 
         function nodes = get.globalN(obj) % Get number of nodes
@@ -184,7 +184,7 @@ classdef MeshObj
         end
 
         function ind = xInd(self,x)
-            ind = find(self.nVec >= x, 1);
+            ind = find(self.nVec >= x, 1); % Find index of x value
         end
 
     end
@@ -232,7 +232,7 @@ classdef MeshObj
         function c = TransientAnalyticalSol(xVec,t)
             trans = 0;
             for k=1:1000
-                trans = trans + ((((-1)^k)/k) * exp(-k^2*pi^2*t)*sin(xVec.*k*pi));
+                trans = trans + ((((-1)^k)/k) * exp(-k^2*pi^2*t)*sin(xVec.*k*pi)); 
             end
             c = xVec + (2/pi)*trans;
         end
