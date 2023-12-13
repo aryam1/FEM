@@ -89,7 +89,6 @@ classdef MeshObj
             [psi,dpsi] = self.BasisFunc(self.basisType); % Get basis functions
             [p,w]= self.GQScheme(4);
 
-
             for i = 1:self.elemN % Loop through elements
                 [K,M,F] = self.elems(i).LocalMatrix(psi,dpsi,p,w); % Get local matrices
                 I = self.basisType*(i-1)+1; % Calculate insertion index for all basis types
@@ -100,6 +99,7 @@ classdef MeshObj
 
                 FG(I:I2,1) = FG(I:I2,1) + F; % Insert local source vector into global source vector
             end
+            
             self.KGlobal = KG; % Set global matrices
             self.MGlobal = MG;
             self.FGlobal = FG;
