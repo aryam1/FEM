@@ -1,0 +1,15 @@
+basis = 2;
+xElems = 50;
+xDist = [1;1];
+x0=0;
+t0=0;
+t1=1;
+dt = 0.002;
+IC=0;
+LB=0;
+LBType = 'd';
+RB=1;
+RBType ='d';
+DDist = [1;1];
+LDist = [1;0];
+FDist = [1;0];

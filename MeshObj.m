@@ -52,6 +52,10 @@ classdef MeshObj
         end
 
         function self = SetParams(self,dVec,lVec,fVec) % Set spatially varying parameters
+            if any([~isnumeric(dVec),~isnumeric(lVec),~isnumeric(fVec)])
+                causeException = MException('MeshObj:SetParams',"Invalid parameters");
+                throw(causeException);
+            end
             self = self.ElemSetup(); % Create element objects
 
             self.Dvec = dVec;
@@ -106,6 +110,14 @@ classdef MeshObj
         end
 
         function self = Solve(self,theta,previous) % Solve system
+            if ~ismember(theta,[0 0.5 1])
+                causeException = MException('MeshObj:Solve',"Invalid theta scheme");
+                throw(causeException);
+            end
+            if ~isa(previous,'MeshObj')
+                causeException = MException('MeshObj:Solve',"Invalid mesh object");
+                throw(causeException);
+            end
             % If not transient, copy global matrices, 
             % elements and materials distributions from previous mesh
             if ~self.transient 
